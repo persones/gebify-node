@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="js/three.min.js"></script>
+  <script src="js/STLLoader.js"></script>
+  <script src="js/viewer.js"></script>
+</head>
+
+<body>
+  <style>
+    .viewer-container {
+      width: 300px;
+      height: 300px;
+      display: inline-block;
+    }
+  </style>
+  <h1>GEBIFY</h1>
+  <div id="all-viewers-container"></div>
+  <script>
+    var viewerList = [];
+    var ws = new WebSocket("ws://localhost:3000");
+    ws.onopen = function () {
+      ws.send(JSON.stringify({ready: true}));
+    };
+
+    ws.onmessage = function (evt) {
+      var data = JSON.parse(evt.data);
+      if ('stl' in data) {
+        viewerList.push(new Viewer(data.stl));
+        console.log(data.stl);
+      }
+    };
+    
+
+    ws.onclose = function () {
+      console.log("Connection is closed...");
+    };
+
+    function animate(){
+      requestAnimationFrame(animate);
+      for (let v of viewerList) {
+        v.render();
+      }
+    }
+
+    animate();
+  </script>
+</body>
+
+</html>
