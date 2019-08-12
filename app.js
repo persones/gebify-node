@@ -11,6 +11,7 @@ const fs = require('fs');
 app.get('/stl_ready', (req, res) => {
   console.log(req.query);
   wss.broadcast(req.query);
+  res.send('ok')
 });
 
 wss.broadcast = function(data) {
